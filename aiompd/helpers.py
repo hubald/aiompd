@@ -48,7 +48,7 @@ def _str_bool(v: str) -> Optional[bool]:
 
 
 def _str_int(v: str) -> Optional[int]:
-    return int(v) if v else None
+    return int(v.split('.')[0]) if v else None
 
 
 def status_from_raw(raw: str) -> Status:
