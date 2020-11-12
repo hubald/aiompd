@@ -221,6 +221,13 @@ class Client:
         await self._send_command('previous')
 
     @lock
+    async def seek_cur(self, value: str):
+        """ Seeks to the position TIME (in seconds; fractions allowed) within the current song.
+            If prefixed by + or -, then the time is relative to the current playing position.
+        """
+        await self._send_command('seekcur', value)
+
+    @lock
     async def shuffle(self, start: int=None, end: int=None):
         """ Shuffle current playlist.
         """
