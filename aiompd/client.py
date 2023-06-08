@@ -177,7 +177,7 @@ class Client:
     def get_volume(self) -> int:
         """ Get current volume.
         """
-        return self._status['volume']
+        return self._status.volume
 
     @lock
     async def set_volume(self, value: int):
@@ -199,7 +199,7 @@ class Client:
         if value == 0:
             return
 
-        volume = self._status['volume'] + value
+        volume = self._status.volume + value
 
         if volume < 0:
             volume = 0
