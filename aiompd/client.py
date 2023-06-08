@@ -171,7 +171,7 @@ class Client:
         elif self._status.state == 'pause':
             await self._send_command('pause', 0)
         elif self._status.state == 'stop':
-            await self._send_command('play', 1)
+            await self._send_command('play', 0)
 
     @lock_and_status
     def get_volume(self) -> int:
