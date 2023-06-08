@@ -209,13 +209,13 @@ class Client:
         await self._send_command('setvol', volume)
 
     @lock
-    async def next(self, count: int=1):
+    async def next(self):
         """ Play next song.
         """
         await self._send_command('next')
 
     @lock
-    async def prev(self, count: int=1):
+    async def prev(self):
         """ Play previous song.
         """
         await self._send_command('previous')
