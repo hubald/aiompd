@@ -40,4 +40,4 @@ class Protocol(asyncio.Protocol):
 
 		if self.client.auto_reconnect:
 			log.debug('try to reconnect')
-			asyncio.create_task(self.client._reconnect())
+			self.client._reconnect()

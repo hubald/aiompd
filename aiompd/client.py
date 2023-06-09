@@ -45,14 +45,45 @@ class Client:
 		"""
 		self = cls(auto_reconnect=auto_reconnect)
 		await self.connect(host, port, loop)
+
+		if auto_reconnect:
+			funcs = dir(self)
+			for func in funcs:
+				super_fun = getattr(self, func)
+				if not type(super_fun).__name__ == 'method': continue
+				if func.startswith('__'): continue
+
+				if super_fun.__name__ == 'wrapper':
+					str_rep = str(super_fun)
+					if str_rep.startswith('<bound method lock.<locals>') or str_rep.startswith('<bound method lock_and_status.<locals>'):
+						if hasattr(super(), func):
+							new_fun = self.reconnect_wrapper(super_fun)
+							log.info('Setting interceptor for {}'.format(func))
+							setattr(self, func, new_fun)
+
 		return self
+
+	def reconnect_wrapper(self, func):
+		async def inner(*args, **kwargs):
+			if self._protocol is None:
+				while True:
+					try:
+						log.info('reconnecting mpd...')
+						await self.connect(self._host, self._port, self._loop)
+						break
+					except Exception as e:
+						log.error('error during reconnect mpd: {}'.format(str(e)))
+						await asyncio.sleep(30)
+			return await (func(*args, **kwargs))
+
+		return inner
 
 	def _on_connection_closed(self):
 		self._transport = None
 		self._protocol = None
 		self._status = None
 
-	async def _reconnect(self) -> asyncio.Future:
+	def _reconnect(self) -> asyncio.Future:
 		return asyncio.create_task(
 			self.connect(self._host, self._port, self._loop))
 
